@@ -4,36 +4,34 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    
+    Rigidbody2D rigidBody2D;
+    public float hVelocity = 10f;
+
+    int choques = 0;
+    public float velocity = 1f;
     // Start is called before the first frame update
     void Start()
     {
-        
+        rigidBody2D = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector2 position = transform.position;
-        //position.x += 0.01f;
-        //position.y -= 0.01f;
-
-        // Debug.Log("Tecla A pulsada: " + Input.GetKey(KeyCode.A));
-        // Debug.Log("Tecla S pulsada: " + Input.GetKey(KeyCode.S));
-        // Debug.Log("Tecla D pulsada: " + Input.GetKey(KeyCode.D));
-        // Debug.Log("Tecla W pulsada: " + Input.GetKey(KeyCode.W));
-
-        // if (Input.GetKey(KeyCode.A))
-        //    position.x -= 0.01f;
-        // if (Input.GetKey(KeyCode.D))
-        //     position.x += 0.01f;
-        // if (Input.GetKey(KeyCode.W))
-        //     position.y += 0.01f;
-        // if (Input.GetKey(KeyCode.S))
-        //     position.y -= 0.01f;
+    
+    }
+    void FixedUpdate() {
+        float inputHorizontal = Input.GetAxis("Horizontal");
+        //rigidBody2D.velocity = new Vector2(inputHorizontal * hVelocity, rigidBody2D.velocity.y);
+        rigidBody2D.AddForce(Vector2.right * inputHorizontal * hVelocity);
         
-        position.x = position.x + Input.GetAxis("Horizontal") * 0.01f;
-        position.y = position.y + Input.GetAxis("Vertical") * 0.01f;
-        transform.position = position;
+    }
+
+    void onCollisionEnter2D(Collision2D other){
+        Debug.Log("Colision con: " + other.gameObject.name);
+        choques++;
+        if (choques == 2){
+            Debug.Log("Has ganado");
+        }
     }
 }
