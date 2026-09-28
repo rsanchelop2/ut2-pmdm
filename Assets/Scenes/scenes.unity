@@ -634,7 +634,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2f8744df7332438998195797fd2ffc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hVelocity: 10
+  hVelocity: 7
   feetCollider: {fileID: 1896021235}
   groundLayer:
     serializedVersion: 2
@@ -1664,9 +1664,9 @@ GameObject:
   - component: {fileID: 1947339469}
   - component: {fileID: 1947339468}
   - component: {fileID: 1947339467}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ultraJump
-  m_TagString: ultraJump
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

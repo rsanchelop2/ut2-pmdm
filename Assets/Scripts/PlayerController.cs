@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
 
         // CON RAYCAST
         float inputHorizontal = Input.GetAxis("Horizontal");
-        rb.AddForce(Vector2.right * inputHorizontal * hVelocity);
+        rb.AddForce(Vector2.right * inputHorizontal * jumpforce);
     }
 
     void OnCollisionEnter2D(Collision2D other){
