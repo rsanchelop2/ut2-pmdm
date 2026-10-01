@@ -332,7 +332,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2f8744df7332438998195797fd2ffc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hVelocity: 7
   feetCollider: {fileID: 0}
   groundLayer:
     serializedVersion: 2
