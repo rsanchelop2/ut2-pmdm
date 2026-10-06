@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -16,6 +17,8 @@ public class PlayerController : MonoBehaviour
     [Header("Movimiento")]
     public float velocity = 18f; 
 
+    private bool puedeMoverse = true;
+
     Animator animator;
 
     void Start()
@@ -29,13 +32,13 @@ public class PlayerController : MonoBehaviour
         float inputMovimiento = Input.GetAxis("Horizontal");
 
         GestionarGiro(inputMovimiento);
-        GestionarSalto(); // Se queda SOLO aquí para detectar el botón correctamente
     }
 
     public void FixedUpdate()
     {
         float inputHorizontal = Input.GetAxis("Horizontal");
-        GestionarMovimiento(inputHorizontal);
+        if (puedeMoverse) GestionarMovimiento(inputHorizontal);
+        GestionarSalto();
     }
 
     void GestionarSalto()
@@ -89,5 +92,17 @@ public class PlayerController : MonoBehaviour
             animator.SetBool("enMovimiento", true);
         else
             animator.SetBool("enMovimiento", false);
+    }
+
+    public void DesactivarMovimiento(float duration)
+    {
+        StartCoroutine(DisableMovementCourtine(duration));
+    }
+
+    private IEnumerator DisableMovementCourtine(float duration)
+    {
+        puedeMoverse = false;
+        yield return new WaitForSeconds(duration);
+        puedeMoverse = true;
     }
 }
