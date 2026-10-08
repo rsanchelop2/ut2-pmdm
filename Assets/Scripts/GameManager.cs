@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     private int monedas;
-    
     public int vidasJugador;
     private int vidasTotales = 3;
     public int VidasTotales {get { return vidasTotales;}}

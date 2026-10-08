@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public Collider2D feetCollider;
     public LayerMask groundLayer;
     public float jumpforce = 7f;
+    private bool isGrounded;
 
     [Header("Configuración de Raycasts")]
     public float rayLength = 0.5f;
@@ -25,6 +26,11 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        // Si no se asigna ninguna capa de suelo en el Inspector, usamos todas las capas por defecto
+        // para que el Raycast no falle por un LayerMask vacío.
+        if (groundLayer.value == 0)
+            groundLayer = Physics2D.DefaultRaycastLayers;
     }
 
     void Update()
@@ -32,39 +38,59 @@ public class PlayerController : MonoBehaviour
         float inputMovimiento = Input.GetAxis("Horizontal");
 
         GestionarGiro(inputMovimiento);
+
+        if ((Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.Space)) && isGrounded)
+        {
+            Saltar();
+        }
     }
 
     public void FixedUpdate()
     {
         float inputHorizontal = Input.GetAxis("Horizontal");
         if (puedeMoverse) GestionarMovimiento(inputHorizontal);
-        GestionarSalto();
+        ComprobarSuelo();
     }
 
-    void GestionarSalto()
+    void ComprobarSuelo()
     {
         Vector2 originCenter = transform.position;
         Vector2 originLeft = new Vector2(transform.position.x - sideOffset, transform.position.y);
         Vector2 originRight = new Vector2(transform.position.x + sideOffset, transform.position.y);
 
-        RaycastHit2D hitCenter = Physics2D.Raycast(originCenter, Vector2.down, rayLength, groundLayer);
-        RaycastHit2D hitLeft = Physics2D.Raycast(originLeft, Vector2.down, rayLength, groundLayer);
-        RaycastHit2D hitRight = Physics2D.Raycast(originRight, Vector2.down, rayLength, groundLayer);
+        int groundMask = groundLayer.value == 0 ? Physics2D.DefaultRaycastLayers : groundLayer.value;
 
-        bool isGrounded = (hitCenter.collider != null || hitLeft.collider != null || hitRight.collider != null);
+        RaycastHit2D hitCenter = Physics2D.Raycast(originCenter, Vector2.down, rayLength, groundMask);
+        RaycastHit2D hitLeft = Physics2D.Raycast(originLeft, Vector2.down, rayLength, groundMask);
+        RaycastHit2D hitRight = Physics2D.Raycast(originRight, Vector2.down, rayLength, groundMask);
 
-        // Si presionamos saltar y estamos en el suelo, saltamos y activamos animación
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpforce);
-            animator.SetBool("salto", true);
-        }
-        
-        // CORRECCIÓN: Si el personaje está en el suelo y NO está subiendo (velocidad y <= 0),
-        // apagamos la animación de salto de manera segura.
+        isGrounded = (hitCenter.collider != null || hitLeft.collider != null || hitRight.collider != null) || rb.IsTouchingLayers(groundMask);
+
         if (isGrounded && rb.velocity.y <= 0.1f)
         {
             animator.SetBool("salto", false);
+        }
+    }
+
+    void Saltar()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, jumpforce);
+        animator.SetBool("salto", true);
+    }
+
+    void OnCollisionStay2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Ground") || (groundLayer.value != 0 && ((1 << other.gameObject.layer) & groundLayer.value) != 0))
+        {
+            isGrounded = true;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Ground") || (groundLayer.value != 0 && ((1 << other.gameObject.layer) & groundLayer.value) != 0))
+        {
+            isGrounded = false;
         }
     }
 

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - jumpForce
   - ultraJump
+  - Ground
   layers:
   - Default
   - TransparentFX
